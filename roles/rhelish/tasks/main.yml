@@ -1,0 +1,11 @@
+---
+- name: Fetch and upload PXE files for each distro and version
+  ansible.builtin.include_tasks: fetch_and_upload.yml
+  vars:
+    distro_key: "{{ distro_item.0.key }}"
+    distro_info: "{{ distro_item.0.value }}"
+    distro_version: "{{ distro_item.1 }}"
+  loop: "{{ rhelish_distros | dict2items | subelements('value.versions') }}"
+  loop_control:
+    loop_var: distro_item
+    label: "{{ distro_item.0.key }} {{ distro_item.1 }}"

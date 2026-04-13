@@ -1,0 +1,146 @@
+# Text install (Graphics are useless here, it's all automated)
+text
+
+# Install from scratch
+#install
+
+# Don't run the Setup Agent on first boot
+firstboot --disable
+
+# Accept the  agreement (otherwise it will stop and ask)
+eula --agreed
+
+# We don't need X configured on an AMI
+skipx
+
+# Specify the repository locations we are downloading from
+{% if item.value.packagemirror is defined %}
+url --url={{ item.value.packagemirror }}
+{% else %}
+url --url={{ forge_profiles_os_boot_info[item.value.baseprofile].defaultmirror }}
+{% endif %}
+
+# Enable EPEL
+# repo --name="EPEL" --baseurl=http://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/
+
+# Network information
+network --bootproto=dhcp --device=eth0 --onboot=on  
+
+# Set up localization
+lang en_US.UTF-8
+keyboard --vckeymap=us --xlayouts='us'
+timezone America/New_York --utc
+timesource --ntp-pool=north-america.pool.ntp.org
+
+rootpw --iscrypted {{ forge_profiles_root_crypt }}
+
+# Create a privileged centos user that will only have an ssh key
+user --name=ansible --homedir=/home/ansible --shell=/bin/bash
+# Ansible key
+sshkey --username=ansible "{{ forge_profiles_ansible_pubkey }}"
+
+# firewalld is normally off in AWS - use Security Groups instead
+# If you want it on, you can use this at a minimum for the rest to work:
+# firewall --enabled --ssh
+firewall --disabled
+
+# You can leave this on if desired
+selinux --permissive
+
+# Specify how the bootloader should be installed (required)
+bootloader --location=mbr --append="crashkernel=auto rhgb quiet" --timeout=0
+
+# See the pre script for how these get used to deal with disk and EFI vs. BIOS detection
+%include /tmp/disksettings
+
+# Service configuration
+services --enabled=NetworkManager,sshd,chronyd,tuned
+
+# Packages selection (%packages section is required)
+%packages
+@^server-product-environment
+@guest-agents
+kexec-tools
+
+# Needed for ansible
+python
+# epel-release
+tuned
+
+# AMI only
+#cloud-init
+#cloud-utils-growpart
+
+# We're viritual - we don't need these firmware packages
+-aic94xx-firmware
+-alsa-sof-firmware
+-atmel-firmware
+-b43-openfwwf
+-bfa-firmware
+-ipw2100-firmware
+-ipw2200-firmware
+-ivtv-firmware
+-iwl100-firmware
+-iwl105-firmware
+-iwl135-firmware
+-iwl1000-firmware
+-iwl2000-firmware
+-iwl2030-firmware
+-iwl3160-firmware
+-iwl3945-firmware
+-iwl4965-firmware
+-iwl5000-firmware
+-iwl5150-firmware
+-iwl6000-firmware
+-iwl6000g2a-firmware
+-iwl6000g2b-firmware
+-iwl6050-firmware
+-iwl7260-firmware
+-libertas-sd8787-firmware
+-libertas-usb8388-firmware
+-netronome-firmware
+-ql2100-firmware
+-ql2200-firmware
+-ql23xx-firmware
+-ql2400-firmware
+-ql2500-firmware
+-rt61pci-firmware
+-rt73usb-firmware
+-xorg-x11-drv-ati-firmware
+-zd1211-firmware
+# New from RHEL10
+-atheros-firmware
+-brcmfmac-firmware
+-cirrus-audio-firmware
+-intel-audio-firmware
+-mt7xxx-firmware
+-nxpwireless-firmware
+-realtek-firmware
+-tiwilink-firmware
+-amd-gpu-firmware
+-intel-gpu-firmware
+-nvidia-gpu-firmware
+-iwlwifi-dvm-firmware
+-iwlwifi-mvm-firmware
+-libertas-firmware
+
+%end
+
+# Root disk and EFI detection
+%pre --logfile /tmp/pre-disk.log
+
+{% include "./templates/standard_partitions_inc.ks.j2" %}
+
+%end
+
+%post --log=/var/log/anaconda/post.log
+# Give privilege
+echo "ansible ALL=(ALL)       NOPASSWD: ALL"> /etc/sudoers.d/ansible_user
+
+cat >> /var/log/anaconda/pre-disk.log << "EOF"
+%include /tmp/pre-disk.log
+EOF
+
+%end
+
+reboot

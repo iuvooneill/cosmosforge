@@ -1,0 +1,8 @@
+---
+forge_profiles_os_boot_info:
+forge_profiles_rhel_profiles:
+forge_profiles_ubuntu_profiles:
+
+forge_profiles_pxe_menu_title: "Forge PXE"
+forge_profiles_pxe_timeout: 200 # 10ths of a second
+forge_profiles_pxe_totaltimeout: 6000

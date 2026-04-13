@@ -1,0 +1,22 @@
+---
+
+# Define this formally in the project
+rhelish_distros:
+  # rocky:
+  #   mirror: "https://download.rockylinux.org/pub/rocky"
+  #   s3_name: "Rocky"
+  #   arch: "x86_64"
+  #   versions:
+  #     - "8"
+  #     - "9"
+  #     - "10"
+  # almalinux:
+  #   mirror: "https://repo.almalinux.org/almalinux"
+  #   s3_name: "AlmaLinux"
+  #   arch: "x86_64"
+  #   versions:
+  #     - "8"
+  #     - "9"
+  #     - "10"
+
+# s3_prefix: "boot/{{ rhelish_distros[rhelish_distro].s3_name }}/{{ rhelish_version }}"

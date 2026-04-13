@@ -1,0 +1,7 @@
+---
+galaxy_info:
+  role_name: rhelish
+  description: Downloads RHEL-like (Rocky Linux, AlmaLinux) PXE boot files and publishes them to S3
+  min_ansible_version: "2.15"
+
+dependencies: []

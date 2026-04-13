@@ -1,0 +1,45 @@
+#!ipxe
+
+set menu-timeout {{ forge_profiles_pxe_timeout % 100 }}
+set submenu-timeout ${menu-timeout}
+
+# Set Menu Default to Exit after timeout
+isset ${menu-default} || set menu-default local
+
+:forge
+menu Forge
+item local (local)
+{% if forge_profiles_rhel_profiles %}
+{% for key, value in forge_profiles_rhel_profiles.items() %}
+item {{ key }} {{ key }}
+{% endfor %}
+{% endif %}
+{% if forge_profiles_ubuntu_profiles %}
+{% for key, value in forge_profiles_ubuntu_profiles.items() %}
+item {{ key }} {{ key }}
+{% endfor %}
+{% endif %}
+choose --default ${menu-default} --timeout ${menu-timeout} target && goto ${target}
+
+{% if forge_profiles_rhel_profiles %}
+{% for key, value in forge_profiles_rhel_profiles.items() %}
+:{{ key }}
+kernel /{{ value.bootpath }}/vmlinuz inst.kssendmac inst.ks={{ forge_s3_bucket_url }}/ks/{{ key }}.ks initrd=initrd.magic{% if value.stage2 is defined %} inst.stage2={{ value.stage2 }}{% endif %}{{''}}
+initrd /{{ value.bootpath }}/initrd.img
+boot
+
+{% endfor %}
+{% endif %}
+{% if forge_profiles_ubuntu_profiles %}
+{% for key, value in forge_profiles_ubuntu_profiles.items() %}
+:{{ key }}
+kernel /images/{{ value.bootpath }}/vmlinuz ip=dhcp nameserver=10.152.1.10 domain=oinc.lab url={{ forge_profiles_os_boot_info[value.baseprofile].bootiso }} autoinstall ds=nocloud-net s=http://{{ forge_s3_bucket_url }}/ubuntu/{{ key }}/ cloud-config-url=http://{{ forge_s3_bucket_url }}/ubuntu/{{ key }}/user-data ---
+initrd /images/{{ value.bootpath }}/initrd.img
+boot
+
+{% endfor %}
+{% endif %}
+
+:local
+iseq ${smbios/manufacturer} HP && exit ||
+sanboot --no-describe --drive 0x80

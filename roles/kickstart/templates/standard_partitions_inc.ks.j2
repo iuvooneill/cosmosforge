@@ -1,0 +1,45 @@
+DIR="/sys/block"
+
+# minimum size of hard drive needed specified in GIGABYTES
+# Use 15 to definitively get 16
+MINSIZE={{ forge_profiles_mindisksize }}
+# In case there is supposed to be a giant data disk, but really, build with one drive if possible
+MAXSIZE={{ forge_profiles_maxdisksize }}
+
+ROOTDRIVE=""
+
+ls -l $DIR/nvme* $DIR/xvd* $DIR/sd*
+for d in $DIR/nvme* $DIR/xvd* $DIR/sd*
+do
+  DEV=`basename "$d"`
+  if [ -d $DIR/$DEV ]; then
+    if [[ "`cat $DIR/$DEV/removable`" = "0" ]]
+    then
+      SIZE=`cat $DIR/$DEV/size`
+      GB=$(($SIZE/2**21))
+      echo "Disk device $DEV has size $GB GB"
+      if [ $GB -gt $MINSIZE -a $GB -lt $MAXSIZE -a -z "$ROOTDRIVE" ]
+      then
+        ROOTDRIVE=$DEV
+        echo "Select ROOTDRIVE=$ROOTDRIVE"
+      fi
+    fi
+  fi
+done
+touch /tmp/disksettings
+if [ -d /sys/firmware/efi ] ; then
+  echo "part /boot/efi --fstype=efi --size=200 --asprimary --ondrive=$ROOTDRIVE" >> /tmp/disksettings
+fi
+cat >> /tmp/disksettings <<DISKEND
+ignoredisk --only-use=$ROOTDRIVE
+zerombr
+clearpart --drives=$ROOTDRIVE --initlabel
+part /boot --fstype=xfs --size=1024 --asprimary --ondrive=$ROOTDRIVE
+part pv.00 --grow --size=1 --ondrive=$ROOTDRIVE
+
+# Create a Logical Volume Management (LVM) group (optional)
+volgroup vg_root pv.00
+
+# Create particular logical volumes (optional)
+logvol / --fstype=xfs --name=root --vgname=vg_root --size=1 --grow
+DISKEND

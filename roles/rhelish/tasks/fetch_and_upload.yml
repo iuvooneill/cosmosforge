@@ -1,0 +1,31 @@
+---
+- name: "Create temporary download directory for {{ distro_info.s3_name }} {{ distro_version }}"
+  ansible.builtin.file:
+    state: directory
+    mode: "0700"
+    path: "/var/tmp/rhelish_pxe/{{ distro_key }}/{{ distro_version }}"
+  register: rhelish_tmpdir
+
+- name: "Download PXE boot files for {{ distro_info.s3_name }} {{ distro_version }}"
+  ansible.builtin.get_url:
+    url: "{{ distro_info.mirror }}/{{ distro_version }}/BaseOS/{{ distro_info.arch }}/os/images/pxeboot/{{ item }}"
+    dest: "{{ rhelish_tmpdir.path }}/{{ item }}"
+    mode: "0644"
+  loop:
+    - vmlinuz
+    - initrd.img
+
+- name: "Upload PXE boot files for {{ distro_info.s3_name }} {{ distro_version }} to S3"
+  amazon.aws.s3_object:
+    bucket: "{{ s3_bucket }}"
+    object: "boot/{{ distro_info.s3_name }}/{{ distro_version }}/{{ item }}"
+    src: "{{ rhelish_tmpdir.path }}/{{ item }}"
+    mode: put
+  loop:
+    - vmlinuz
+    - initrd.img
+
+# - name: Remove temporary download directory
+#   ansible.builtin.file:
+#     path: "{{ rhelish_tmpdir.path }}"
+#     state: absent

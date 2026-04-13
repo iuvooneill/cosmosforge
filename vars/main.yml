@@ -1,0 +1,54 @@
+---
+
+s3_bucket: "iuvoforgetest"
+
+rhelish_distros:
+  rocky:
+    mirror: "https://download.rockylinux.org/pub/rocky"
+    s3_name: "Rocky"
+    arch: "x86_64"
+    versions:
+      - "8"
+      - "9"
+      - "10"
+  almalinux:
+    mirror: "https://repo.almalinux.org/almalinux"
+    s3_name: "AlmaLinux"
+    arch: "x86_64"
+    versions:
+      - "8"
+      - "9"
+      - "10"
+
+s3_prefix: "boot/{{ rhelish_distros[rhelish_distro].s3_name }}/{{ rhelish_version }}"
+
+forge_profiles_os_boot_info:
+  Rocky-9-x86_64:
+    initimage: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/isolinux/initrd.img
+    vmlinuz: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/isolinux/vmlinuz
+    defaultmirror: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/
+#   AlmaLinux-8-x86_64:
+#     initimage: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/initrd.img"
+#     vmlinuz: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/vmlinuz"
+#     defaultmirror: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/kickstart/
+
+forge_profiles_rhel_profiles:
+  # almalinux-8-vm-remote:
+  #   baseprofile: AlmaLinux-8-x86_64
+  #   bootpath: boot/AlmaLinux/8
+  #   kickstartbase: rhelish-8-vm
+  rocky-9-vm-remote:
+    baseprofile: Rocky-9-x86_64
+    bootpath: boot/Rocky/9
+    kickstartbase: rhelish-9-vm
+
+forge_profiles_root_crypt: "{{ vault_forge_profiles_root_crypt }}"
+forge_profiles_ansible_pubkey: "{{ vault_forge_profiles_ansible_pubkey }}"
+
+# Minimum size of hard drive needed specified in GIGABYTES
+# Use 15 to definitively get 16
+forge_profiles_mindisksize: 15
+# In case there is supposed to be a giant data disk, but really, build with one drive if possible
+forge_profiles_maxdisksize: 1100
+
+forge_s3_bucket_url: https://iuvoforgetest.s3.us-east-1.amazonaws.com/

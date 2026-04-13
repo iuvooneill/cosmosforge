@@ -1,0 +1,9 @@
+---
+- name: Copy the iPXE config files from templates to S3
+  amazon.aws.s3_object:
+    bucket: "{{ s3_bucket }}"
+    object: "ipxe/{{ item }}"
+    content: "{{ lookup('template', 'templates/' ~ item ~ '.j2') }}"
+    mode: put
+  loop:
+    - default.ipxe

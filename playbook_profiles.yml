@@ -1,0 +1,16 @@
+---
+
+- name: Profiles
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  become: false
+
+  vars_files:
+    - vars/main.yml
+    - vars/vault.yml
+
+  roles:
+    - ipxe
+    - kickstart
+
