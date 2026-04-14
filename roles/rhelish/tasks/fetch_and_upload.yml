@@ -25,7 +25,7 @@
     - vmlinuz
     - initrd.img
 
-# - name: Remove temporary download directory
-#   ansible.builtin.file:
-#     path: "{{ rhelish_tmpdir.path }}"
-#     state: absent
+- name: Remove temporary download directory
+  ansible.builtin.file:
+    path: "{{ rhelish_tmpdir.path }}"
+    state: absent
