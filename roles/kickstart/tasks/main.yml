@@ -1,13 +1,13 @@
 ---
 
-- name: Test Render Kickstart Files
-  ansible.builtin.template:
-    src: "{{ item.value.kickstartbase }}.j2"
-    dest: "/var/tmp/{{ item.key }}.ks"
-    mode: "0644"
-  loop: "{{ forge_profiles_rhel_profiles | dict2items }}"
-  loop_control:
-    label: "{{ item.value.kickstartbase }}"
+# - name: Test Render Kickstart Files
+#   ansible.builtin.template:
+#     src: "{{ item.value.kickstartbase }}.j2"
+#     dest: "/var/tmp/{{ item.key }}.ks"
+#     mode: "0644"
+#   loop: "{{ forge_profiles_rhel_profiles | dict2items }}"
+#   loop_control:
+#     label: "{{ item.value.kickstartbase }}"
 
 - name: Copy the kickstart files from templates to S3
   amazon.aws.s3_object:
