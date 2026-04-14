@@ -7,3 +7,5 @@
     mode: put
   loop:
     - default.ipxe
+  become: false
+  

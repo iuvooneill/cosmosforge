@@ -24,7 +24,7 @@ choose --default ${menu-default} --timeout ${menu-timeout} target && goto ${targ
 {% if forge_profiles_rhel_profiles %}
 {% for key, value in forge_profiles_rhel_profiles.items() %}
 :{{ key }}
-kernel /{{ value.bootpath }}/vmlinuz inst.kssendmac inst.ks={{ forge_s3_bucket_url }}/ks/{{ key }}.ks initrd=initrd.magic{% if value.stage2 is defined %} inst.stage2={{ value.stage2 }}{% endif %}{{''}}
+kernel /{{ value.bootpath }}/vmlinuz inst.kssendmac inst.ks={{ forge_s3_bucket_url }}ks/{{ key }}.ks initrd=initrd.magic{% if value.stage2 is defined %} inst.stage2={{ value.stage2 }}{% endif %}{{''}}
 initrd /{{ value.bootpath }}/initrd.img
 boot
 
@@ -33,7 +33,7 @@ boot
 {% if forge_profiles_ubuntu_profiles %}
 {% for key, value in forge_profiles_ubuntu_profiles.items() %}
 :{{ key }}
-kernel /images/{{ value.bootpath }}/vmlinuz ip=dhcp nameserver=10.152.1.10 domain=oinc.lab url={{ forge_profiles_os_boot_info[value.baseprofile].bootiso }} autoinstall ds=nocloud-net s=http://{{ forge_s3_bucket_url }}/ubuntu/{{ key }}/ cloud-config-url=http://{{ forge_s3_bucket_url }}/ubuntu/{{ key }}/user-data ---
+kernel /images/{{ value.bootpath }}/vmlinuz ip=dhcp nameserver=10.152.1.10 domain=oinc.lab url={{ forge_profiles_os_boot_info[value.baseprofile].bootiso }} autoinstall ds=nocloud-net s=https://{{ forge_s3_bucket_url }}ubuntu/{{ key }}/ cloud-config-url=https://{{ forge_s3_bucket_url }}ubuntu/{{ key }}/user-data ---
 initrd /images/{{ value.bootpath }}/initrd.img
 boot
 

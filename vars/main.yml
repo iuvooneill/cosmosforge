@@ -27,16 +27,25 @@ forge_profiles_os_boot_info:
     initimage: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/isolinux/initrd.img
     vmlinuz: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/isolinux/vmlinuz
     defaultmirror: http://mirrors.rit.edu/rocky/9/BaseOS/x86_64/os/
-#   AlmaLinux-8-x86_64:
-#     initimage: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/initrd.img"
-#     vmlinuz: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/vmlinuz"
-#     defaultmirror: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/kickstart/
+  AlmaLinux-8-x86_64:
+    initimage: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/initrd.img"
+    vmlinuz: "http://mirrors.rit.edu/almalinux/8/BaseOS/x86_64/kickstart/isolinux/vmlinuz"
+    defaultmirror: https://repo.almalinux.org/almalinux/8/BaseOS/x86_64/kickstart/
+  AlmaLinux-9-x86_64:
+    initimage: "http://mirrors.rit.edu/almalinux/9/BaseOS/x86_64/kickstart/isolinux/initrd.img"
+    vmlinuz: "http://mirrors.rit.edu/almalinux/9/BaseOS/x86_64/kickstart/isolinux/vmlinuz"
+    defaultmirror: https://repo.almalinux.org/almalinux/9/BaseOS/x86_64/kickstart/
+
 
 forge_profiles_rhel_profiles:
-  # almalinux-8-vm-remote:
-  #   baseprofile: AlmaLinux-8-x86_64
-  #   bootpath: boot/AlmaLinux/8
-  #   kickstartbase: rhelish-8-vm
+  almalinux-8-vm-remote:
+    baseprofile: AlmaLinux-8-x86_64
+    bootpath: boot/AlmaLinux/8
+    kickstartbase: rhelish-8-vm
+  almalinux-9-vm-remote:
+    baseprofile: AlmaLinux-9-x86_64
+    bootpath: boot/AlmaLinux/9
+    kickstartbase: rhelish-9-vm
   rocky-9-vm-remote:
     baseprofile: Rocky-9-x86_64
     bootpath: boot/Rocky/9

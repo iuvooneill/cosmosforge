@@ -2,22 +2,20 @@
 
 - name: Test Render Kickstart Files
   ansible.builtin.template:
-    src: "{{ item }}.j2"
-    dest: "/var/tmp/{{ item }}"
+    src: "{{ item.value.kickstartbase }}.j2"
+    dest: "/var/tmp/{{ item.key }}.ks"
     mode: "0644"
-    owner: root
-    group: root
-  loop: "{{ forge_profiles_rhel_profiles.values() | map(attribute='kickstartbase') | unique | list }}"
+  loop: "{{ forge_profiles_rhel_profiles | dict2items }}"
+  loop_control:
+    label: "{{ item.value.kickstartbase }}"
 
-
-# - name: Copy the kickstart files from templates to S3
-#   amazon.aws.s3_object:
-#     bucket: "{{ s3_bucket }}"
-#     object: "ks/{{ ksfile }}"
-#     content: "{{ lookup('template', 'templates/' ~ ksfile ~ '.j2') }}"
-#     mode: put
-#   loop:
-#     # - rhelish-8-vm
-#     - rhelish-9-vm
-#   loop_control:
-#     loop_var: ksfile
+- name: Copy the kickstart files from templates to S3
+  amazon.aws.s3_object:
+    bucket: "{{ s3_bucket }}"
+    object: "ks/{{ item.key }}.ks"
+    content: "{{ lookup('template', 'templates/' ~ item.value.kickstartbase ~ '.j2') }}"
+    mode: put
+  loop: "{{ forge_profiles_rhel_profiles | dict2items }}"
+  # loop_control:
+  #   loop_var: ksfile
+  become: false
