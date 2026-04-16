@@ -1,0 +1,19 @@
+---
+- name: Create S3 bucket
+  amazon.aws.s3_bucket:
+    name: "{{ s3_bucket }}"
+    state: present
+    profile: sandbox1
+    public_access:
+      block_public_acls: false
+      block_public_policy: false
+      ignore_public_acls: false
+      restrict_public_buckets: false
+  become: false
+
+- name: Apply IP-restriction policy to S3 bucket
+  amazon.aws.s3_bucket:
+    name: "{{ s3_bucket }}"
+    policy: "{{ lookup('template', 'bucket_policy.json.j2') }}"
+    profile: sandbox1
+  become: false
