@@ -1,6 +1,6 @@
-# cosmosforge
+# microforge
 
-Fully-remote version of Forge using iPXE and S3
+Fully-remote version of Forge using iPXE and S3, with the miminal amout of files.
 
 # EXPERIMENTAL
 
