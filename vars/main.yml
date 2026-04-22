@@ -52,6 +52,10 @@ forge_profiles_rhel_profiles:
     baseprofile: AlmaLinux-9-x86_64
     bootpath: boot/AlmaLinux/9
     kickstartbase: rhelish-9-vm
+  almalinux-9-vm-aws:
+    baseprofile: AlmaLinux-9-x86_64
+    bootpath: boot/AlmaLinux/9
+    kickstartbase: rhelish-9-vm-aws
   rocky-9-vm-remote:
     baseprofile: Rocky-9-x86_64
     bootpath: boot/Rocky/9
@@ -66,4 +70,4 @@ forge_profiles_mindisksize: 15
 # In case there is supposed to be a giant data disk, but really, build with one drive if possible
 forge_profiles_maxdisksize: 1100
 
-forge_s3_bucket_url: https://iuvoforgetest.s3.us-east-1.amazonaws.com/
+forge_s3_bucket_url: https://iuvoforgetest2.s3.us-east-1.amazonaws.com/

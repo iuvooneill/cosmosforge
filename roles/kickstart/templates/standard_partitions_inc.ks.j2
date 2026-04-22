@@ -27,13 +27,16 @@ do
   fi
 done
 touch /tmp/disksettings
+cat >> /tmp/disksettings <<DISKSET1
+zerombr
+clearpart --drives=$ROOTDRIVE --all --initlabel
+bootloader --location=mbr --append="crashkernel=auto rhgb quiet" --timeout=0
+DISKSET1
+
 if [ -d /sys/firmware/efi ] ; then
   echo "part /boot/efi --fstype=efi --size=200 --asprimary --ondrive=$ROOTDRIVE" >> /tmp/disksettings
 fi
-cat >> /tmp/disksettings <<DISKEND
-ignoredisk --only-use=$ROOTDRIVE
-zerombr
-clearpart --drives=$ROOTDRIVE --initlabel
+cat >> /tmp/disksettings <<DISKSET2
 part /boot --fstype=xfs --size=1024 --asprimary --ondrive=$ROOTDRIVE
 part pv.00 --grow --size=1 --ondrive=$ROOTDRIVE
 
@@ -42,4 +45,4 @@ volgroup vg_root pv.00
 
 # Create particular logical volumes (optional)
 logvol / --fstype=xfs --name=root --vgname=vg_root --size=1 --grow
-DISKEND
+DISKSET2
