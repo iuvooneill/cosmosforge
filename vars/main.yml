@@ -4,7 +4,6 @@ s3_bucket: "iuvoforgetest2"
 
 s3_bucket_allowed_ips:
   - "173.76.123.44/32"
-  - "1.1.1.0/24"
 
 # These are the distros we can automatically download and put in S3
 # RHEL itself can't be listed here as we need to grab the files from an ISO
