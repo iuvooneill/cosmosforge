@@ -1,9 +1,13 @@
 ---
 
-s3_bucket: "iuvoforgetest2"
+s3_bucket: "iuvoforgetest3"
 
 s3_bucket_allowed_ips:
   - "173.76.123.44/32"
+
+s3_bucket_allowed_accounts:
+  - 116741075323
+  - 520770367931
 
 # These are the distros we can automatically download and put in S3
 # RHEL itself can't be listed here as we need to grab the files from an ISO
@@ -52,10 +56,11 @@ forge_profiles_rhel_profiles:
     baseprofile: AlmaLinux-9-x86_64
     bootpath: boot/AlmaLinux/9
     kickstartbase: rhelish-9-vm
-  almalinux-9-vm-aws:
-    baseprofile: AlmaLinux-9-x86_64
-    bootpath: boot/AlmaLinux/9
-    kickstartbase: rhelish-9-vm-aws
+  # Used while debugging, not needed now
+  # almalinux-9-vm-aws:
+  #   baseprofile: AlmaLinux-9-x86_64
+  #   bootpath: boot/AlmaLinux/9
+  #   kickstartbase: rhelish-9-vm-aws
   rocky-9-vm-remote:
     baseprofile: Rocky-9-x86_64
     bootpath: boot/Rocky/9

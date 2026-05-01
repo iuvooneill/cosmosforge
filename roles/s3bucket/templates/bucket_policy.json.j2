@@ -7,6 +7,32 @@
       "Principal": "*",
       "Action": "s3:GetObject",
       "Resource": "arn:aws:s3:::{{ s3_bucket }}/*"
-    }
+    }{% if s3_bucket_allowed_ips is defined or s3_bucket_allowed_accounts is defined %},
+    {
+      "Sid": "DenyKSFromNonAllowed",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource": "arn:aws:s3:::{{ s3_bucket }}/ks/*",
+      "Condition": {
+{% if s3_bucket_allowed_ips is defined and s3_bucket_allowed_accounts is defined %}
+        "NotIpAddress": {
+          "aws:SourceIp": {{ s3_bucket_allowed_ips | to_json }}
+        },
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalAccount": {{ s3_bucket_allowed_accounts | to_json }}
+        }
+{% elif s3_bucket_allowed_ips is defined %}
+        "NotIpAddress": {
+          "aws:SourceIp": {{ s3_bucket_allowed_ips | to_json }}
+        }
+{% elif s3_bucket_allowed_accounts is defined %}
+        "ForAllValues:StringNotEquals": {
+          "aws:PrincipalAccount": {{ s3_bucket_allowed_accounts | to_json }}
+        }
+{% endif %}
+      }
+    }{% endif %}
+
   ]
 }
